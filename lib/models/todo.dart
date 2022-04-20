@@ -1,4 +1,3 @@
-
 class Todo {
   Todo({required this.title, required this.dateTime});
 
@@ -8,7 +7,6 @@ class Todo {
         dateTime = DateTime.parse(json['datetime']);
   // CONVERTENDO DE TEXTO PARA DATETIME
 
-  
   String title;
   DateTime dateTime;
 

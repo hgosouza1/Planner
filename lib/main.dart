@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/pages/todo_list_page.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-
-  runApp(const MyApp());
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 
 // DECLARANDO O APP
