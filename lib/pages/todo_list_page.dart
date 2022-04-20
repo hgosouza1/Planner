@@ -164,8 +164,9 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   /// MODAL PARA ADIÇÃO DE TAREFA
-/*  configurationModalBottomSheet(BuildContext context) async {
-    await showModalBottomSheet(
+  void configurationModalBottomSheet(context) {
+    // FUNÇÃO PARA RECURSOS DO BUTTON ADD
+    showModalBottomSheet(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(40),
@@ -208,22 +209,21 @@ class _TodoListPageState extends State<TodoListPage> {
                       });
                       return;
                     }
-                    setState(
-                      () {
-                        if (_events[_controller.selectedDay] != null) {
-                          _events[_controller.selectedDay]
-                              ?.add(_eventController.text);
-                        } else {
-                          _events[_controller.selectedDay] = [
-                            _eventController.text
-                          ];
-                        }
-                        prefs.setString(
-                            "events", json.encode(encodeMap(_events)));
-                        _eventController.clear();
-                        Navigator.pop(context);
-                      },
-                    );
+                    setState(() {
+                      Todo newTodo = Todo(
+                        title: text,
+                        dateTime: DateTime.now(),
+                      );
+                      // CRIANDO UM OBJETO NEW TODO
+                      todos.add(newTodo);
+                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
+                    });
+                    todoRepository.saveTodoList(todos);
+                    // SET STATE PARA ATUALIZAR A TELA
+                    todoController.clear();
+                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                    Navigator.of(context).pop();
+                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
                   },
                 ),
                 width: 450.0,
@@ -232,28 +232,28 @@ class _TodoListPageState extends State<TodoListPage> {
               SizedBox(
                 child: TextButton.icon(
                   onPressed: () {
-                    if (_eventController.text.isEmpty) {
+                    String text = todoController.text;
+                    if (text.isEmpty) {
                       setState(() {
                         errorText = 'O título não pode ser vazio!';
                       });
                       return;
                     }
-                    setState(
-                      () {
-                        if (_events[_controller.selectedDay] != null) {
-                          _events[_controller.selectedDay]
-                              ?.add(_eventController.text);
-                        } else {
-                          _events[_controller.selectedDay] = [
-                            _eventController.text
-                          ];
-                        }
-                        prefs.setString(
-                            "events", json.encode(encodeMap(_events)));
-                        _eventController.clear();
-                        Navigator.pop(context);
-                      },
-                    );
+                    setState(() {
+                      Todo newTodo = Todo(
+                        title: text,
+                        dateTime: DateTime.now(),
+                      );
+                      // CRIANDO UM OBJETO NEW TODO
+                      todos.add(newTodo);
+                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
+                    });
+                    todoRepository.saveTodoList(todos);
+                    // SET STATE PARA ATUALIZAR A TELA
+                    todoController.clear();
+                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                    Navigator.of(context).pop();
+                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
                   },
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text('Adicionar'),
@@ -266,7 +266,7 @@ class _TodoListPageState extends State<TodoListPage> {
         );
       },
     );
-  } */
+  }
 
   /// ORDEM DE EXIBIÇÃO DOS WIDGETS
   @override
@@ -326,118 +326,128 @@ class _TodoListPageState extends State<TodoListPage> {
   /// CORPO COM A LISTA DO APP
   Widget _body() {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 75.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TableCalendar(
-                daysOfWeekStyle: DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(fontWeight: FontWeight.w100, fontSize: 17.0, color: Colors.grey[800]),
-                  weekendStyle: TextStyle(fontWeight: FontWeight.w100, fontSize: 17.0, color: Colors.grey[800]),
-                  dowTextFormatter: (date, locale) => DateFormat.E(locale).format(date)[0],
+      body: Container(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 75.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TableCalendar(
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(
+                        fontWeight: FontWeight.w100,
+                        fontSize: 17.0,
+                        color: Colors.grey[800]),
+                    weekendStyle: TextStyle(
+                        fontWeight: FontWeight.w100,
+                        fontSize: 17.0,
+                        color: Colors.grey[800]),
+                    dowTextFormatter: (date, locale) =>
+                        DateFormat.E(locale).format(date)[0],
+                  ),
+                  headerVisible: false,
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30.0),
+                        color: Colors.grey[800]),
+                  ),
+                  firstDay: DateTime.utc(2010, 10, 16),
+                  lastDay: DateTime.utc(2030, 3, 14),
+                  focusedDay: _focusedDay,
+                  calendarFormat: _calendarFormat,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(_selectedDay, day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    if (!isSameDay(_selectedDay, selectedDay)) {
+                      // Call `setState()` when updating the selected day
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    // No need to call `setState()` here
+                    _focusedDay = focusedDay;
+                  },
                 ),
-                headerVisible: false,
-                calendarStyle: CalendarStyle(
-                  todayDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      color: Colors.grey[800]),
+
+                Flexible(
+                  child: ListView(
+                    // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
+                    shrinkWrap: true,
+                    children: [
+                      for (Todo todo in todos)
+                        // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
+                        TodoListItem(
+                          todo: todo,
+                          onDelete: onDelete,
+                          // PASSADA A REFERÊNCIA DA FUNÇÃO onDelete POR PARÂMETRO PARA O WIDGTE FILHO
+                        ),
+                    ],
+                  ),
                 ),
-                firstDay: DateTime.utc(2010, 10, 16),
-                lastDay: DateTime.utc(2030, 3, 14),
-                focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
-                selectedDayPredicate: (day) {
-                  return isSameDay(_selectedDay, day);
-                },
-                onDaySelected: (selectedDay, focusedDay) {
-                  if (!isSameDay(_selectedDay, selectedDay)) {
-                    // Call `setState()` when updating the selected day
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  }
-                },
-                onPageChanged: (focusedDay) {
-                  // No need to call `setState()` here
-                  _focusedDay = focusedDay;
-                },
-              ),
-              Flexible(
-                child: ListView(
-                  // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
-                  shrinkWrap: true,
+                const SizedBox(height: 16),
+                // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
+                Row(
+                  // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
                   children: [
-                    for (Todo todo in todos)
-                      // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
-                      TodoListItem(
-                        todo: todo,
-                        onDelete: onDelete,
-                        // PASSADA A REFERÊNCIA DA FUNÇÃO onDelete POR PARÂMETRO PARA O WIDGTE FILHO
+                    if (todos.isEmpty)
+                      (const Expanded(
+                        child: Text(
+                          'Você não possuí tarefas adicionadas',
+                        ),
+                      ))
+                    else if (todos.length == 1)
+                      (Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefa pendente',
+                        ),
+                      ))
+                    else
+                      (Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefas pendentes',
+                        ),
+                      )),
+                    const SizedBox(width: 8),
+                    // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
+                    if (todos.isNotEmpty)
+                      ElevatedButton.icon(
+                        // BOTÃO DE LIMPAR
+                        icon: const Icon(
+                          Icons.delete_sweep_rounded,
+                        ),
+                        onPressed: showDeleteTodosConfirmationDialog,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue,
+                          onPrimary: Colors.white,
+                          elevation: 20,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32.0),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                        ),
+                        label: const Text(
+                          'Limpar tudo',
+                          style: TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        // style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
-              Row(
-                // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
-                children: [
-                  if (todos.isEmpty)
-                    (const Expanded(
-                      child: Text(
-                        'Você não possuí tarefas adicionadas',
-                      ),
-                    ))
-                  else if (todos.length == 1)
-                    (Expanded(
-                      child: Text(
-                        'Você possuí ${todos.length} tarefa pendente',
-                      ),
-                    ))
-                  else
-                    (Expanded(
-                      child: Text(
-                        'Você possuí ${todos.length} tarefas pendentes',
-                      ),
-                    )),
-                  const SizedBox(width: 8),
-                  // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
-                  if (todos.isNotEmpty)
-                    ElevatedButton.icon(
-                      // BOTÃO DE LIMPAR
-                      icon: const Icon(
-                        Icons.delete_sweep_rounded,
-                      ),
-                      onPressed: showDeleteTodosConfirmationDialog,
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color(0xFF673AB7),
-                        onPrimary: Colors.white,
-                        elevation: 20,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      label: const Text(
-                        'Limpar tudo',
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
-                      // style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // configurationModalBottomSheet(context);
+          configurationModalBottomSheet(context);
         },
         child: Container(
           width: 60,

@@ -26,9 +26,9 @@ class TodoListItem extends StatelessWidget {
           child: Container(
             // CAIXAS DE TAREFAS
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(25),
               // BORDAS DAS CAIXAS DE TAREFAS
-              color: Colors.grey[200],
+              color: Colors.grey[800],
               // COR DAS CAIXAS DE TAREFAS
             ),
             padding: const EdgeInsets.all(16),
