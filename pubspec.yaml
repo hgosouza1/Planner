@@ -74,6 +74,8 @@ flutter:
       fonts:
         - asset: lib/fonts/Roboto-Black.ttf
         - weight: 400
+        - asset: lib/fonts/Roboto-Light.ttf
+        - weight: 100
 
   # To add assets to your application, add an assets section, like this:
   # assets:

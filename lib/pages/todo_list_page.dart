@@ -23,7 +23,7 @@ final TextEditingController todoController = TextEditingController();
 final TodoRepository todoRepository = TodoRepository();
 
 class _TodoListPageState extends State<TodoListPage> {
-  CalendarFormat _calendarFormat = CalendarFormat.week;
+  final CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
@@ -336,10 +336,14 @@ class _TodoListPageState extends State<TodoListPage> {
                 TableCalendar(
                   daysOfWeekStyle: DaysOfWeekStyle(
                     weekdayStyle: TextStyle(
+                      /// DIAS DA SEMANA
+                        fontFamily: "Roboto-Light.ttf",
                         fontWeight: FontWeight.w100,
                         fontSize: 17.0,
                         color: Colors.grey[800]),
                     weekendStyle: TextStyle(
+                      /// FINAL DE SEMANA
+                        fontFamily: "Roboto-Light.ttf",
                         fontWeight: FontWeight.w100,
                         fontSize: 17.0,
                         color: Colors.grey[800]),
@@ -351,6 +355,18 @@ class _TodoListPageState extends State<TodoListPage> {
                     todayDecoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30.0),
                         color: Colors.grey[800]),
+                    defaultTextStyle: const TextStyle(
+                      /// DIAS DA SEMANA
+                        fontFamily: "Roboto-Light.ttf",
+                        fontWeight: FontWeight.w100,
+                        color: Colors.white
+                    ),
+                    weekendTextStyle: const TextStyle(
+                      /// FINAL DE SEMANA
+                        fontFamily: "Roboto-Light.ttf",
+                        fontWeight: FontWeight.w100,
+                        color: Colors.white
+                    ),
                   ),
                   firstDay: DateTime.utc(2010, 10, 16),
                   lastDay: DateTime.utc(2030, 3, 14),
