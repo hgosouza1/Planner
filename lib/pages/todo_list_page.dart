@@ -1,5 +1,4 @@
 import 'package:camera_camera/camera_camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,7 +28,6 @@ class _TodoListPageState extends State<TodoListPage> {
 
   /// FORMATANDO DATA SELECIONADA E O DIA ATUAL
   get _dateNow => DateFormat.yMd().format(_focusedDay);
-
   get _now => DateFormat.yMd().format(DateTime.now());
 
   i.File? arquivo;
@@ -298,7 +296,7 @@ class _TodoListPageState extends State<TodoListPage> {
             child: const Text(
               "Hoje",
               style: TextStyle(
-                fontFamily: "Roboto",
+                fontFamily: "Roboto-Black",
                 fontSize: 26,
                 letterSpacing: 0.5,
                 color: Colors.white,
@@ -309,9 +307,9 @@ class _TodoListPageState extends State<TodoListPage> {
         else
           Container(
             child: Text(
-              DateFormat.EEEE().format(_focusedDay),
+              DateFormat.EEEE('pt_BR').format(_focusedDay),
               style: const TextStyle(
-                fontFamily: "Roboto",
+                fontFamily: "Roboto-Black",
                 fontSize: 26,
                 letterSpacing: 0.5,
                 color: Colors.white,
@@ -326,138 +324,132 @@ class _TodoListPageState extends State<TodoListPage> {
   /// CORPO COM A LISTA DO APP
   Widget _body() {
     return Scaffold(
-      body: Container(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 75.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TableCalendar(
-                  daysOfWeekStyle: DaysOfWeekStyle(
-                    weekdayStyle: TextStyle(
-                      /// DIAS DA SEMANA
-                        fontFamily: "Roboto-Light.ttf",
-                        fontWeight: FontWeight.w100,
-                        fontSize: 17.0,
-                        color: Colors.grey[800]),
-                    weekendStyle: TextStyle(
-                      /// FINAL DE SEMANA
-                        fontFamily: "Roboto-Light.ttf",
-                        fontWeight: FontWeight.w100,
-                        fontSize: 17.0,
-                        color: Colors.grey[800]),
-                    dowTextFormatter: (date, locale) =>
-                        DateFormat.E(locale).format(date)[0],
-                  ),
-                  headerVisible: false,
-                  calendarStyle: CalendarStyle(
-                    todayDecoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0),
-                        color: Colors.grey[800]),
-                    defaultTextStyle: const TextStyle(
-                      /// DIAS DA SEMANA
-                        fontFamily: "Roboto-Light.ttf",
-                        fontWeight: FontWeight.w100,
-                        color: Colors.white
-                    ),
-                    weekendTextStyle: const TextStyle(
-                      /// FINAL DE SEMANA
-                        fontFamily: "Roboto-Light.ttf",
-                        fontWeight: FontWeight.w100,
-                        color: Colors.white
-                    ),
-                  ),
-                  firstDay: DateTime.utc(2010, 10, 16),
-                  lastDay: DateTime.utc(2030, 3, 14),
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  selectedDayPredicate: (day) {
-                    return isSameDay(_selectedDay, day);
-                  },
-                  onDaySelected: (selectedDay, focusedDay) {
-                    if (!isSameDay(_selectedDay, selectedDay)) {
-                      // Call `setState()` when updating the selected day
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                    }
-                  },
-                  onPageChanged: (focusedDay) {
-                    // No need to call `setState()` here
-                    _focusedDay = focusedDay;
-                  },
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 75.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TableCalendar(
+                locale: 'pt_BR',
+                daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle: TextStyle(
+                      /// DIAS DA SEMANA - MÊS
+                      fontFamily: "Roboto-Light.ttf",
+                      fontWeight: FontWeight.w200,
+                      fontSize: 17.0,
+                      color: Colors.grey[800]),
+                  weekendStyle: TextStyle(
+                      /// FINAL DE SEMANA - MÊS
+                      fontFamily: "Roboto-Light.ttf",
+                      fontWeight: FontWeight.w200,
+                      fontSize: 17.0,
+                      color: Colors.grey[800]),
+                  dowTextFormatter: (date, locale) =>
+                      DateFormat.E(locale).format(date)[0],
                 ),
-
-                Flexible(
-                  child: ListView(
-                    // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
-                    shrinkWrap: true,
-                    children: [
-                      for (Todo todo in todos)
-                        // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
-                        TodoListItem(
-                          todo: todo,
-                          onDelete: onDelete,
-                          // PASSADA A REFERÊNCIA DA FUNÇÃO onDelete POR PARÂMETRO PARA O WIDGTE FILHO
-                        ),
-                    ],
-                  ),
+                headerVisible: false,
+                calendarStyle: CalendarStyle(
+                  todayDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.0),
+                      color: Colors.grey[800]),
+                  defaultTextStyle: const TextStyle(
+                      /// DIAS DA SEMANA
+                      fontFamily: "Roboto-Light.ttf",
+                      fontWeight: FontWeight.w200,
+                      color: Colors.white),
+                  weekendTextStyle: const TextStyle(
+                      /// FINAL DE SEMANA
+                      fontFamily: "Roboto-Light.ttf",
+                      fontWeight: FontWeight.w200,
+                      color: Colors.white),
                 ),
-                const SizedBox(height: 16),
-                // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
-                Row(
-                  // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
+                firstDay: DateTime.utc(2010, 10, 16),
+                lastDay: DateTime.utc(2030, 3, 14),
+                focusedDay: _focusedDay,
+                calendarFormat: _calendarFormat,
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDay, day);
+                },
+                onDaySelected: (selectedDay, focusedDay) {
+                  if (!isSameDay(_selectedDay, selectedDay)) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                  }
+                },
+                onPageChanged: (focusedDay) {
+                  _focusedDay = focusedDay;
+                },
+              ),
+              Flexible(
+                child: ListView(
+                  // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
+                  shrinkWrap: true,
                   children: [
-                    if (todos.isEmpty)
-                      (const Expanded(
-                        child: Text(
-                          'Você não possuí tarefas adicionadas',
-                        ),
-                      ))
-                    else if (todos.length == 1)
-                      (Expanded(
-                        child: Text(
-                          'Você possuí ${todos.length} tarefa pendente',
-                        ),
-                      ))
-                    else
-                      (Expanded(
-                        child: Text(
-                          'Você possuí ${todos.length} tarefas pendentes',
-                        ),
-                      )),
-                    const SizedBox(width: 8),
-                    // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
-                    if (todos.isNotEmpty)
-                      ElevatedButton.icon(
-                        // BOTÃO DE LIMPAR
-                        icon: const Icon(
-                          Icons.delete_sweep_rounded,
-                        ),
-                        onPressed: showDeleteTodosConfirmationDialog,
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                          onPrimary: Colors.white,
-                          elevation: 20,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32.0),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                        ),
-                        label: const Text(
-                          'Limpar tudo',
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
-                        ),
-                        // style: TextStyle(fontWeight: FontWeight.bold)),
+                    for (Todo todo in todos)
+                      // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
+                      TodoListItem(
+                        todo: todo,
+                        onDelete: onDelete,
+                        // PASSADA A REFERÊNCIA DA FUNÇÃO onDelete POR PARÂMETRO PARA O WIDGTE FILHO
                       ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
+              Row(
+                // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
+                children: [
+                  if (todos.isEmpty)
+                    (const Expanded(
+                      child: Text(
+                        'Você não possuí tarefas adicionadas',
+                      ),
+                    ))
+                  else if (todos.length == 1)
+                    (Expanded(
+                      child: Text(
+                        'Você possuí ${todos.length} tarefa pendente',
+                      ),
+                    ))
+                  else
+                    (Expanded(
+                      child: Text(
+                        'Você possuí ${todos.length} tarefas pendentes',
+                      ),
+                    )),
+                  const SizedBox(width: 8),
+                  // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
+                  if (todos.isNotEmpty)
+                    ElevatedButton.icon(
+                      // BOTÃO DE LIMPAR
+                      icon: const Icon(
+                        Icons.delete_sweep_rounded,
+                      ),
+                      onPressed: showDeleteTodosConfirmationDialog,
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        onPrimary: Colors.white,
+                        elevation: 20,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                      ),
+                      label: const Text(
+                        'Limpar tudo',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                      // style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -487,13 +479,12 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
         child: BottomAppBar(
           color: Colors.grey[850],
-          notchMargin: 10,
+          notchMargin: 13,
           shape: const CircularNotchedRectangle(),
           elevation: 60,
           child: SizedBox(
             height: 60,
             child: Row(
-              //children inside bottom appbar
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
