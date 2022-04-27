@@ -41,6 +41,7 @@ dependencies:
   camera_camera: ^2.0.2
   get: ^4.6.1
   table_calendar: ^3.0.5
+  string_extensions: ^0.4.4
 
 dev_dependencies:
   flutter_test:
@@ -74,9 +75,7 @@ flutter:
     - family: Roboto
       fonts:
         - asset: lib/fonts/Roboto-Black.ttf
-        - weight: 400
         - asset: lib/fonts/Roboto-Light.ttf
-        - weight: 100
 
   # To add assets to your application, add an assets section, like this:
   # assets:

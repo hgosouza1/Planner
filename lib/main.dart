@@ -10,7 +10,6 @@ void main() {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate
       ],
-      supportedLocales: [Locale('pt', 'BR')],
       home: MyApp(),
     ),
   );

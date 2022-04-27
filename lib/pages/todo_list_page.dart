@@ -30,10 +30,19 @@ class _TodoListPageState extends State<TodoListPage> {
   get _dateNow => DateFormat.yMd().format(_focusedDay);
   get _now => DateFormat.yMd().format(DateTime.now());
 
+  /// FORMATANDO O NOME DO DIA DA SEMANA
+  String get primaryText => DateFormat.EEEE('pt_BR')
+      .format(_focusedDay)
+      .replaceAll("-feira", "");
+  // RETIRANDO TRECHO DO DIA
+  String get firstUppercase => primaryText.substring(0, 1).toUpperCase();
+  // ESPECIFICANDO A PRIMEIRA LETRA COMO MAÍUSCULA
+  String get lastUppercase => primaryText.substring(1);
+  // CAPTANDO O RETANTE DO TEXTO COM EXCESSÃO DA PRIMEIRA LETRA
+
   i.File? arquivo;
   XFile? archive;
   final picker = ImagePicker();
-
   get kEvents => null;
 
   Future getFileFromGallery() async {
@@ -57,10 +66,6 @@ class _TodoListPageState extends State<TodoListPage> {
     }
   }
 
-  // CONTROLADOR PARA CONSEGUIR PEGAR O TEXTO DO CAMPO DE TEXTO
-  // CRIADA UMA LISTA COM A CLASSE TODO
-  // CADA STRING É O TÍTULO DE UMA TAREFA
-  // PARA CADA CAMPO DE TEXTO, TERÁ UM CONTROLLER E VICE-VERSA.
   List<Todo> todos = [];
   Todo? deletedTodo;
   int? deletedTodoPos;
@@ -274,10 +279,10 @@ class _TodoListPageState extends State<TodoListPage> {
         children: <Widget>[
           _body(),
           Positioned(
-            top: 16,
-            right: 20,
-            height: 40,
-            width: 40,
+            top: 20,
+            right: 23,
+            height: 35,
+            width: 35,
             child: _avatar(context),
           ),
           _titleTop(),
@@ -296,26 +301,29 @@ class _TodoListPageState extends State<TodoListPage> {
             child: const Text(
               "Hoje",
               style: TextStyle(
-                fontFamily: "Roboto-Black",
+                fontFamily: "lib/fonts/Roboto-Black.ttf",
+                fontWeight: FontWeight.w700,
                 fontSize: 26,
                 letterSpacing: 0.5,
                 color: Colors.white,
               ),
             ),
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 24),
           )
         else
           Container(
             child: Text(
-              DateFormat.EEEE('pt_BR').format(_focusedDay),
+              firstUppercase + lastUppercase,
+              // UNINDO O RESULTADO DOS DOIS TEXTOS
               style: const TextStyle(
-                fontFamily: "Roboto-Black",
+                fontFamily: "lib/fonts/Roboto-Black.ttf",
+                fontWeight: FontWeight.w700,
                 fontSize: 26,
                 letterSpacing: 0.5,
                 color: Colors.white,
               ),
             ),
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 24),
           )
       ],
     );
@@ -331,37 +339,37 @@ class _TodoListPageState extends State<TodoListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TableCalendar(
+                headerVisible: false,
                 locale: 'pt_BR',
                 daysOfWeekStyle: DaysOfWeekStyle(
                   weekdayStyle: TextStyle(
-                      /// DIAS DA SEMANA - MÊS
-                      fontFamily: "Roboto-Light.ttf",
-                      fontWeight: FontWeight.w200,
+                      // DIAS DA SEMANA - ÚTEIS
+                      fontFamily: "lib/fonts/Roboto-Medium.ttf",
+                      fontWeight: FontWeight.w500,
                       fontSize: 17.0,
                       color: Colors.grey[800]),
                   weekendStyle: TextStyle(
-                      /// FINAL DE SEMANA - MÊS
-                      fontFamily: "Roboto-Light.ttf",
-                      fontWeight: FontWeight.w200,
+                      // DIAS DA SEMANA - FIM DE SEMANA
+                      fontFamily: "lib/fonts/Roboto-Medium.ttf",
+                      fontWeight: FontWeight.w600,
                       fontSize: 17.0,
                       color: Colors.grey[800]),
                   dowTextFormatter: (date, locale) =>
-                      DateFormat.E(locale).format(date)[0],
+                      DateFormat.E(locale).format(date)[0].toUpperCase(),
                 ),
-                headerVisible: false,
                 calendarStyle: CalendarStyle(
+                  todayTextStyle: const TextStyle(
+                      fontWeight: FontWeight.w900, color: Colors.white),
                   todayDecoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30.0),
                       color: Colors.grey[800]),
                   defaultTextStyle: const TextStyle(
-                      /// DIAS DA SEMANA
-                      fontFamily: "Roboto-Light.ttf",
-                      fontWeight: FontWeight.w200,
+                      // DIAS DOS MêS - ÚTEIS
+                      fontFamily: "lib/fonts/Roboto-Light.ttf",
                       color: Colors.white),
                   weekendTextStyle: const TextStyle(
-                      /// FINAL DE SEMANA
-                      fontFamily: "Roboto-Light.ttf",
-                      fontWeight: FontWeight.w200,
+                      // DIAS DOS MêS - FIM DE SEMANA
+                      fontFamily: "lib/fonts/Roboto-Light.ttf",
                       color: Colors.white),
                 ),
                 firstDay: DateTime.utc(2010, 10, 16),
@@ -479,7 +487,7 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
         child: BottomAppBar(
           color: Colors.grey[850],
-          notchMargin: 13,
+          notchMargin: 10,
           shape: const CircularNotchedRectangle(),
           elevation: 60,
           child: SizedBox(
@@ -522,11 +530,8 @@ class _TodoListPageState extends State<TodoListPage> {
       return SizedBox(
         child: FloatingActionButton(
           child: Icon(Icons.account_circle_sharp,
-              color: Colors.grey[900], size: 40),
+              color: Colors.grey[900], size: 35),
           backgroundColor: Colors.white,
-          // shape: const StadiumBorder(
-          //  side: BorderSide(color: Colors.blue, width: 4),),
-          /// BORDAS NO ÍCONE DO AVATAR
           onPressed: () {
             showDialog(
               context: context,
