@@ -10,7 +10,7 @@ import 'package:todolist/widgets/todo_list_item.dart';
 import '../preview/preview_page.dart';
 import 'dart:io' as i;
 
-// DECLARANDO A PÁGINA
+/// DECLARANDO A PÁGINA
 class TodoListPage extends StatefulWidget {
   const TodoListPage({Key? key}) : super(key: key);
 
@@ -28,21 +28,24 @@ class _TodoListPageState extends State<TodoListPage> {
 
   /// FORMATANDO DATA SELECIONADA E O DIA ATUAL
   get _dateNow => DateFormat.yMd().format(_focusedDay);
+
   get _now => DateFormat.yMd().format(DateTime.now());
 
   /// FORMATANDO O NOME DO DIA DA SEMANA
-  String get primaryText => DateFormat.EEEE('pt_BR')
-      .format(_focusedDay)
-      .replaceAll("-feira", "");
-  // RETIRANDO TRECHO DO DIA
-  String get firstUppercase => primaryText.substring(0, 1).toUpperCase();
+  //RETIRANDO TRECHO DO DIA
+  String get primaryText =>
+      DateFormat.EEEE('pt_BR').format(_focusedDay).replaceAll("-feira", "");
+
   // ESPECIFICANDO A PRIMEIRA LETRA COMO MAÍUSCULA
-  String get lastUppercase => primaryText.substring(1);
+  String get firstUppercase => primaryText.substring(0, 1).toUpperCase();
+
   // CAPTANDO O RETANTE DO TEXTO COM EXCESSÃO DA PRIMEIRA LETRA
+  String get lastUppercase => primaryText.substring(1);
 
   i.File? arquivo;
   XFile? archive;
   final picker = ImagePicker();
+
   get kEvents => null;
 
   Future getFileFromGallery() async {
@@ -193,17 +196,16 @@ class _TodoListPageState extends State<TodoListPage> {
                     errorText: errorText,
                     focusedBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.blue,
+                        color: Colors.cyan,
                         width: 2,
                       ),
                     ),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: Colors.blue,
+                        color: Colors.cyan,
                         width: 2,
                       ),
                     ),
-                    // DEFAULT VALUE
                   ),
                   onSubmitted: (String text) {
                     if (text.isEmpty) {
@@ -265,7 +267,7 @@ class _TodoListPageState extends State<TodoListPage> {
             ],
             mainAxisAlignment: MainAxisAlignment.center,
           ),
-          height: 120.0,
+          height: 150.0,
         );
       },
     );
@@ -332,179 +334,194 @@ class _TodoListPageState extends State<TodoListPage> {
   /// CORPO COM A LISTA DO APP
   Widget _body() {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 75.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TableCalendar(
-                headerVisible: false,
-                locale: 'pt_BR',
-                daysOfWeekStyle: DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 75.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TableCalendar(
+                  headerVisible: false,
+                  locale: 'pt_BR',
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: const TextStyle(
                       // DIAS DA SEMANA - ÚTEIS
                       fontFamily: "lib/fonts/Roboto-Medium.ttf",
                       fontWeight: FontWeight.w500,
                       fontSize: 17.0,
-                      color: Colors.grey[800]),
-                  weekendStyle: TextStyle(
-                      // DIAS DA SEMANA - FIM DE SEMANA
-                      fontFamily: "lib/fonts/Roboto-Medium.ttf",
-                      fontWeight: FontWeight.w600,
-                      fontSize: 17.0,
-                      color: Colors.grey[800]),
-                  dowTextFormatter: (date, locale) =>
-                      DateFormat.E(locale).format(date)[0].toUpperCase(),
+                      color: Color.fromRGBO(47, 64, 79, 1),
+                    ),
+                    weekendStyle: const TextStyle(
+                        // DIAS DA SEMANA - FIM DE SEMANA
+                        fontFamily: "lib/fonts/Roboto-Medium.ttf",
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17.0,
+                        color: Color.fromRGBO(47, 64, 79, 1.0)),
+                    dowTextFormatter: (date, locale) =>
+                        DateFormat.E(locale).format(date)[0].toUpperCase(),
+                  ),
+                  calendarStyle: const CalendarStyle(
+                    selectedDecoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromRGBO(85, 173, 181, 1),
+                    ),
+                    todayTextStyle: TextStyle(
+                        fontWeight: FontWeight.w900, color: Colors.white),
+                    todayDecoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromRGBO(25, 32, 51, 1.0),
+                    ),
+                    defaultTextStyle: TextStyle(
+                        // DIAS DOS MêS - ÚTEIS
+                        fontFamily: "lib/fonts/Roboto-Light.ttf",
+                        color: Colors.white),
+                    weekendTextStyle: TextStyle(
+                        // DIAS DOS MêS - FIM DE SEMANA
+                        fontFamily: "lib/fonts/Roboto-Light.ttf",
+                        color: Colors.white),
+                  ),
+                  firstDay: DateTime.utc(2010, 10, 16),
+                  lastDay: DateTime.utc(2030, 3, 14),
+                  focusedDay: _focusedDay,
+                  calendarFormat: _calendarFormat,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(_selectedDay, day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    if (!isSameDay(_selectedDay, selectedDay)) {
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    _focusedDay = focusedDay;
+                  },
                 ),
-                calendarStyle: CalendarStyle(
-                  todayTextStyle: const TextStyle(
-                      fontWeight: FontWeight.w900, color: Colors.white),
-                  todayDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      color: Colors.grey[800]),
-                  defaultTextStyle: const TextStyle(
-                      // DIAS DOS MêS - ÚTEIS
-                      fontFamily: "lib/fonts/Roboto-Light.ttf",
-                      color: Colors.white),
-                  weekendTextStyle: const TextStyle(
-                      // DIAS DOS MêS - FIM DE SEMANA
-                      fontFamily: "lib/fonts/Roboto-Light.ttf",
-                      color: Colors.white),
+                Flexible(
+                  child: ListView(
+                    // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
+                    shrinkWrap: true,
+                    children: [
+                      for (Todo todo in todos)
+                        // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
+                        if (DateFormat('dd/MM/yyyy').format(todo.dateTime) ==
+                            DateFormat('dd/MM/yyyy').format(_focusedDay))
+                          (TodoListItem(
+                            todo: todo,
+                            onDelete: onDelete,
+                            // PASSADA A REFERÊNCIA DA FUNÇÃO onDelete POR PARÂMETRO PARA O WIDGTE FILHO
+                          ))
+                    ],
+                  ),
                 ),
-                firstDay: DateTime.utc(2010, 10, 16),
-                lastDay: DateTime.utc(2030, 3, 14),
-                focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
-                selectedDayPredicate: (day) {
-                  return isSameDay(_selectedDay, day);
-                },
-                onDaySelected: (selectedDay, focusedDay) {
-                  if (!isSameDay(_selectedDay, selectedDay)) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  }
-                },
-                onPageChanged: (focusedDay) {
-                  _focusedDay = focusedDay;
-                },
-              ),
-              Flexible(
-                child: ListView(
-                  // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
-                  shrinkWrap: true,
+                const SizedBox(height: 16),
+                // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
+                Row(
+                  // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
                   children: [
+                    if (todos.isEmpty &&
+                        DateFormat('dd/MM/yyyy').format(_focusedDay).isNotEmpty)
+                      (const Expanded(
+                        child: Text(
+                          'Você ainda não possuí tarefas adicionadas',
+                        ),
+                      )),
                     for (Todo todo in todos)
-                      // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
-                      TodoListItem(
-                        todo: todo,
-                        onDelete: onDelete,
-                        // PASSADA A REFERÊNCIA DA FUNÇÃO onDelete POR PARÂMETRO PARA O WIDGTE FILHO
+                      if (todos.isEmpty &&
+                          DateFormat('dd/MM/yyyy').format(_selectedDay!) ==
+                              DateFormat('dd/MM/yyyy').format(todo.dateTime))
+                        (const Expanded(
+                          child: Text(
+                            'Você ainda não possuí tarefas adicionadas',
+                            // 'Você possuí ${todos.length} tarefa pendente',
+                          ),
+                        ))
+                      else
+                        (Expanded(
+                          child: Text(
+                            'Você possuí ${todos.length} tarefas pendentes',
+                          ),
+                        )),
+                    const SizedBox(width: 8),
+                    // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
+                    if (todos.isNotEmpty)
+                      ElevatedButton.icon(
+                        // BOTÃO DE LIMPAR
+                        icon: const Icon(
+                          Icons.delete_sweep_rounded,
+                        ),
+                        onPressed: showDeleteTodosConfirmationDialog,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          onPrimary: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32.0),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                        ),
+                        label: const Text(
+                          'Limpar tudo',
+                          style: TextStyle(
+                            fontFamily: "lib/fonts/Roboto-Medium.ttf",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                        // style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
-              Row(
-                // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
-                children: [
-                  if (todos.isEmpty)
-                    (const Expanded(
-                      child: Text(
-                        'Você não possuí tarefas adicionadas',
-                      ),
-                    ))
-                  else if (todos.length == 1)
-                    (Expanded(
-                      child: Text(
-                        'Você possuí ${todos.length} tarefa pendente',
-                      ),
-                    ))
-                  else
-                    (Expanded(
-                      child: Text(
-                        'Você possuí ${todos.length} tarefas pendentes',
-                      ),
-                    )),
-                  const SizedBox(width: 8),
-                  // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
-                  if (todos.isNotEmpty)
-                    ElevatedButton.icon(
-                      // BOTÃO DE LIMPAR
-                      icon: const Icon(
-                        Icons.delete_sweep_rounded,
-                      ),
-                      onPressed: showDeleteTodosConfirmationDialog,
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
-                        onPrimary: Colors.white,
-                        elevation: 20,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      label: const Text(
-                        'Limpar tudo',
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
-                      // style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          configurationModalBottomSheet(context);
-        },
-        child: Container(
-          width: 60,
-          height: 60,
-          child: const Icon(
-            Icons.add,
-            size: 37,
-          ),
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.blue,
-          ),
-        ),
-        elevation: 60.0,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(35.0),
-          topLeft: Radius.circular(35.0),
-        ),
-        child: BottomAppBar(
-          color: Colors.grey[850],
-          notchMargin: 10,
-          shape: const CircularNotchedRectangle(),
-          elevation: 60,
-          child: SizedBox(
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                    icon: const Icon(Icons.home, color: Colors.transparent),
-                    onPressed: () {}),
               ],
             ),
           ),
         ),
-      ),
-      backgroundColor: Colors.grey[900],
-    );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            configurationModalBottomSheet(context);
+          },
+          child: Container(
+            width: 60,
+            height: 60,
+            child: const Icon(
+              Icons.add,
+              size: 37,
+            ),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color.fromRGBO(85, 173, 181, 1),
+              // Color.fromRGBO(116, 234, 206, 1.0),
+            ),
+          ),
+          elevation: 60.0,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(35.0),
+            topLeft: Radius.circular(35.0),
+          ),
+          child: BottomAppBar(
+            color: const Color.fromRGBO(25, 32, 51, 1),
+            notchMargin: 10,
+            shape: const CircularNotchedRectangle(),
+            elevation: 60,
+            child: SizedBox(
+              height: 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                      icon: const Icon(Icons.home, color: Colors.transparent),
+                      onPressed: () {}),
+                ],
+              ),
+            ),
+          ),
+        ),
+        backgroundColor: const Color.fromRGBO(19, 27, 40, 1.0));
   }
 
   /// BOTÃO DA IMAGEM DE PERFIL
@@ -549,35 +566,65 @@ class _TodoListPageState extends State<TodoListPage> {
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 200),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
+          Radius.circular(15.0),
         ),
       ),
-      title: const Text('Selecione ou tire uma foto:'),
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton.icon(
-            onPressed: () =>
-                Get.to(() => CameraCamera(onFile: (file) => showPreview(file))),
-            icon: const Icon(Icons.camera_alt),
-            label: const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Tirar uma foto'),
+          const Text(
+            'Foto de Perfil',
+            style: TextStyle(
+                fontFamily: "lib/fonts/Segoe UI Bold.ttf",
+                fontWeight: FontWeight.w600,
+                fontSize: 26,
+                letterSpacing: 1.0,
+                color: Colors.white),
+          ),
+          Container(
+            padding: const EdgeInsets.only(bottom: 30),
+          ),
+          SizedBox(
+            width: 220.0,
+            height: 50.0,
+            child: ElevatedButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromRGBO(85, 173, 181, 1),
+                ),
+              ),
+              onPressed: () => Get.to(
+                  () => CameraCamera(onFile: (file) => showPreview(file))),
+              icon: const Icon(Icons.camera_alt),
+              label: const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text('Tirar uma foto'),
+              ),
             ),
           ),
           Container(
             padding: const EdgeInsets.all(10),
           ),
-          ElevatedButton.icon(
-            onPressed: () => getFileFromGallery(),
-            icon: const Icon(Icons.camera_alt),
-            label: const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Selecionar da Galeria'),
+          SizedBox(
+            width: 220.0,
+            height: 50.0,
+            child: ElevatedButton.icon(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color.fromRGBO(85, 173, 181, 1),
+                ),
+              ),
+              onPressed: () => getFileFromGallery(),
+              icon: const Icon(Icons.attach_file),
+              label: const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text('Selecionar da Galeria'),
+              ),
             ),
           ),
         ],
       ),
+      backgroundColor: const Color.fromRGBO(25, 32, 51, 1),
     );
   }
 }
