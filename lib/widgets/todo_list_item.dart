@@ -9,6 +9,7 @@ class TodoListItem extends StatelessWidget {
     required this.todo,
     required this.onDelete,
   }) : super(key: key);
+
   // O WIDGTE FILHO RECEBEU A FUNÇÃO onDelete POR PARÂMETRO
 
   final Todo todo;
@@ -17,7 +18,7 @@ class TodoListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       // ESPAÇAMENTO ENTRE AS TAREFAS DA LISTA
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
@@ -61,6 +62,7 @@ class TodoListItem extends StatelessWidget {
           secondaryActions: [
             // PARA EXIBIR BOTÕES AO CORRER PARA O LADO ESQUERDO, UTILIZA-SE secondaryActions
             IconSlideAction(
+              // BOTÃO DE CORRER PARA DELETAR
               color: Colors.red,
               icon: Icons.delete,
               caption: 'Deletar',
@@ -74,6 +76,5 @@ class TodoListItem extends StatelessWidget {
         ),
       ),
     );
-    // BOTÃO DE CORRER PARA DELETAR
   }
 }

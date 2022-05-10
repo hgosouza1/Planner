@@ -1,5 +1,6 @@
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +25,7 @@ final TodoRepository todoRepository = TodoRepository();
 class _TodoListPageState extends State<TodoListPage> {
   final CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime _selectedDay = DateTime.now();
 
   /// FORMATANDO DATA SELECIONADA E O DIA ATUAL
   get _dateNow => DateFormat.yMd().format(_focusedDay);
@@ -41,6 +42,20 @@ class _TodoListPageState extends State<TodoListPage> {
 
   // CAPTANDO O RETANTE DO TEXTO COM EXCESSÃO DA PRIMEIRA LETRA
   String get lastUppercase => primaryText.substring(1);
+
+  TimeOfDay _time = TimeOfDay.now();
+  late TimeOfDay picked;
+
+  Future<void> selectTime(BuildContext context) async {
+    picked = (await showTimePicker(
+      context: context,
+      initialTime: _time,
+    ))!;
+    setState(() {
+      _time = picked;
+      print(picked);
+    });
+  }
 
   i.File? arquivo;
   XFile? archive;
@@ -73,205 +88,6 @@ class _TodoListPageState extends State<TodoListPage> {
   Todo? deletedTodo;
   int? deletedTodoPos;
   String? errorText;
-
-  get color => null;
-
-  /// FUNÇÃO PARA DELETAR AS TAREFEAS DA LISTA
-  void onDelete(Todo todo) {
-    // CRIADA A FUNÇÃO onDelete NO WIDGTE PAI
-    deletedTodo = todo;
-    // ''SALVAR'' A TAREFA DELETADA
-    deletedTodoPos = todos.indexOf(todo);
-    // RETORNAR O ÍNDICE DA TAREFA REMOVIDA = SENDO: 0, 1, 2 E ETC...
-    setState(() {
-      todos.remove(todo);
-    });
-    todoRepository.saveTodoList(todos);
-    // SALVAR A EXCLUSÃO DO ITEM NO REPOSITÓRIO
-    ScaffoldMessenger.of(context).clearSnackBars();
-    // SUBIR A OPÇÃO DE DESFAZER A MEDIDA QUE FOR SENDO SELECIONADO
-    ScaffoldMessenger.of(context).showSnackBar(
-      // MENSAGEM APÓS AÇÃO DO USUÁRIO
-      SnackBar(
-        content: Text(
-          'Tarefa ${todo.title} foi removida com sucesso!',
-          style: const TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        action: SnackBarAction(
-          label: 'Desfazer',
-          textColor: Colors.grey,
-          onPressed: () {
-            setState(() {
-              todos.insert(deletedTodoPos!, deletedTodo!);
-              // INSERIR NA POSIÇÃO, O ITEM DELETADO
-              // EXCLAMAÇÃO PARA INFORMAR QUE O PARÂMETRO SÓ SERÁ TRATADADO SE NÃO FOR NULO
-            });
-            todoRepository.saveTodoList(todos);
-            // SALVAR A EXCLUSÃO DO ITEM NO REPOSITÓRIO
-          },
-        ),
-        duration: const Duration(seconds: 5),
-        // DURAÇÃO DA MENSAGEM DE DESFAZER
-      ),
-    );
-  }
-
-  /// DELETAR TODOS AS TAREFAS DA LISTA
-  void deleteAllTodos() {
-    // FUNÇÃO PARA LIMPAR TUDO
-    setState(() {
-      todos.clear();
-    });
-    todoRepository.saveTodoList(todos);
-    // SALVAR A EXCLUSÃO DOS ITENS NO REPOSITÓRIO
-  }
-
-  /// FUNÇÃO CAIXA DE ALERTA PARA SELEÇÃO DO AVATAR
-  void addAvatar() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog();
-      },
-    );
-  }
-
-  /// FUNÇÃO DE POP-UP COM A CONFIRMAÇÃO DA EXCLUSÃO COM OPÇÃO DE DESFAZER
-  void showDeleteTodosConfirmationDialog() {
-    // FUNÇÃO PARA CRIAR UMA CAIXA DE ALERTA PARA LIMPAR TUDO
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Limpar tudo?'),
-        content:
-            const Text('Você tem certeza que deseja apagar todas as tarefas?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // PARA FECHAR O DIÁLOGO
-            },
-            style: TextButton.styleFrom(primary: Colors.lightBlue),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              deleteAllTodos();
-              // PARA FECHAR O DIÁLOGO E CHAMAR A FUNÇÃO DE LIMPAR TUDO
-            },
-            style: TextButton.styleFrom(primary: Colors.red),
-            child: const Text('Limpar tudo'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// MODAL PARA ADIÇÃO DE TAREFA
-  void configurationModalBottomSheet(context) {
-    // FUNÇÃO PARA RECURSOS DO BUTTON ADD
-    showModalBottomSheet(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(40),
-          topRight: Radius.circular(40),
-        ),
-      ),
-      context: context,
-      builder: (BuildContext bc) {
-        return SizedBox(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                child: TextField(
-                  controller: todoController,
-                  decoration: InputDecoration(
-                    border: const UnderlineInputBorder(),
-                    labelText: 'Adicione uma tarefa!',
-                    // TÍTULO DO CAMPO
-                    hintText: 'Ex: Estudar Inglês',
-                    // TEXTO DE EXEMPLO
-                    errorText: errorText,
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.cyan,
-                        width: 2,
-                      ),
-                    ),
-                    enabledBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.cyan,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  onSubmitted: (String text) {
-                    if (text.isEmpty) {
-                      setState(() {
-                        errorText = 'O título não pode ser vazio!';
-                      });
-                      return;
-                    }
-                    setState(() {
-                      Todo newTodo = Todo(
-                        title: text,
-                        dateTime: DateTime.now(),
-                      );
-                      // CRIANDO UM OBJETO NEW TODO
-                      todos.add(newTodo);
-                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
-                    });
-                    todoRepository.saveTodoList(todos);
-                    // SET STATE PARA ATUALIZAR A TELA
-                    todoController.clear();
-                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
-                    Navigator.of(context).pop();
-                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
-                  },
-                ),
-                width: 450.0,
-                height: 70.0,
-              ),
-              SizedBox(
-                child: TextButton.icon(
-                  onPressed: () {
-                    String text = todoController.text;
-                    if (text.isEmpty) {
-                      setState(() {
-                        errorText = 'O título não pode ser vazio!';
-                      });
-                      return;
-                    }
-                    setState(() {
-                      Todo newTodo = Todo(
-                        title: text,
-                        dateTime: DateTime.now(),
-                      );
-                      // CRIANDO UM OBJETO NEW TODO
-                      todos.add(newTodo);
-                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
-                    });
-                    todoRepository.saveTodoList(todos);
-                    // SET STATE PARA ATUALIZAR A TELA
-                    todoController.clear();
-                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
-                    Navigator.of(context).pop();
-                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
-                  },
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Adicionar'),
-                ),
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
-          height: 150.0,
-        );
-      },
-    );
-  }
 
   /// ORDEM DE EXIBIÇÃO DOS WIDGETS
   @override
@@ -335,12 +151,12 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget _body() {
     return Scaffold(
         body: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 75.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TableCalendar(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 75.0),
+                child: TableCalendar(
                   headerVisible: false,
                   locale: 'pt_BR',
                   daysOfWeekStyle: DaysOfWeekStyle(
@@ -399,7 +215,10 @@ class _TodoListPageState extends State<TodoListPage> {
                     _focusedDay = focusedDay;
                   },
                 ),
-                Flexible(
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Flexible(
                   child: ListView(
                     // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
                     shrinkWrap: true,
@@ -407,7 +226,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       for (Todo todo in todos)
                         // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
                         if (DateFormat('dd/MM/yyyy').format(todo.dateTime) ==
-                            DateFormat('dd/MM/yyyy').format(_focusedDay))
+                            DateFormat('dd/MM/yyyy').format(_selectedDay))
                           (TodoListItem(
                             todo: todo,
                             onDelete: onDelete,
@@ -416,34 +235,32 @@ class _TodoListPageState extends State<TodoListPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
-                Row(
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 100.0),
+                child:
+                    // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
+                    Row(
                   // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
                   children: [
-                    if (todos.isEmpty &&
-                        DateFormat('dd/MM/yyyy').format(_focusedDay).isNotEmpty)
+                    if (todos.isEmpty)
                       (const Expanded(
                         child: Text(
                           'Você ainda não possuí tarefas adicionadas',
                         ),
+                      ))
+                    else if (todos.length == 1)
+                      (Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefa pendente',
+                        ),
+                      ))
+                    else if (todos.length > 1)
+                      (Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefas pendentes',
+                        ),
                       )),
-                    for (Todo todo in todos)
-                      if (todos.isEmpty &&
-                          DateFormat('dd/MM/yyyy').format(_selectedDay!) ==
-                              DateFormat('dd/MM/yyyy').format(todo.dateTime))
-                        (const Expanded(
-                          child: Text(
-                            'Você ainda não possuí tarefas adicionadas',
-                            // 'Você possuí ${todos.length} tarefa pendente',
-                          ),
-                        ))
-                      else
-                        (Expanded(
-                          child: Text(
-                            'Você possuí ${todos.length} tarefas pendentes',
-                          ),
-                        )),
                     const SizedBox(width: 8),
                     // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
                     if (todos.isNotEmpty)
@@ -474,13 +291,13 @@ class _TodoListPageState extends State<TodoListPage> {
                       ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            configurationModalBottomSheet(context);
+            hourModal();
           },
           child: Container(
             width: 60,
@@ -625,6 +442,227 @@ class _TodoListPageState extends State<TodoListPage> {
         ],
       ),
       backgroundColor: const Color.fromRGBO(25, 32, 51, 1),
+    );
+  }
+
+  /// FUNÇÃO CAIXA DE ALERTA PARA SELEÇÃO DO AVATAR
+  void addAvatar() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog();
+      },
+    );
+  }
+
+  /// MODAL PARA ADIÇÃO DE TAREFA
+  void configurationModalBottomSheet(context) {
+    // FUNÇÃO PARA RECURSOS DO BUTTON ADD
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(40),
+          topRight: Radius.circular(40),
+        ),
+      ),
+      context: context,
+      builder: (BuildContext bc) {
+        return SizedBox(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                child: TextField(
+                  controller: todoController,
+                  decoration: InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    labelText: 'Adicione uma tarefa!',
+                    // TÍTULO DO CAMPO
+                    hintText: 'Ex: Estudar Inglês',
+                    // TEXTO DE EXEMPLO
+                    errorText: errorText,
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.cyan,
+                        width: 2,
+                      ),
+                    ),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.cyan,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  onSubmitted: (String text) {
+                    if (text.isEmpty) {
+                      setState(() {
+                        errorText = 'O título não pode ser vazio!';
+                      });
+                      return;
+                    }
+                    setState(() {
+                      Todo newTodo = Todo(
+                        title: text,
+                        dateTime: _selectedDay,
+                      );
+                      // CRIANDO UM OBJETO NEW TODO
+                      todos.add(newTodo);
+                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
+                    });
+                    todoRepository.saveTodoList(todos);
+                    // SET STATE PARA ATUALIZAR A TELA
+                    todoController.clear();
+                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                    Navigator.of(context).pop();
+                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
+                  },
+                ),
+                width: 450.0,
+                height: 70.0,
+              ),
+              SizedBox(
+                child: TextButton.icon(
+                  onPressed: () {
+                    String text = todoController.text;
+                    if (text.isEmpty) {
+                      setState(() {
+                        errorText = 'O título não pode ser vazio!';
+                      });
+                      return;
+                    }
+                    setState(() {
+                      Todo newTodo = Todo(
+                        title: text,
+                        dateTime: _selectedDay,
+                      );
+                      // CRIANDO UM OBJETO NEW TODO
+                      todos.add(newTodo);
+                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
+                    });
+                    todoRepository.saveTodoList(todos);
+                    // SET STATE PARA ATUALIZAR A TELA
+                    todoController.clear();
+                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                    Navigator.of(context).pop();
+                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
+                  },
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Adicionar'),
+                ),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          height: 150.0,
+        );
+      },
+    );
+  }
+
+  /// MODAL PARA SELECIONAR A HORA DA TAREFA
+  Widget hourModal() {
+    return AlertDialog(
+      content: const Text("Selecione a hora"),
+      actions: <Widget>[
+        TimePickerSpinner(
+          is24HourMode: true,
+          normalTextStyle:
+              const TextStyle(fontSize: 24, color: Colors.deepOrange),
+          highlightedTextStyle:
+              const TextStyle(fontSize: 24, color: Colors.yellow),
+          spacing: 50,
+          itemHeight: 80,
+          isForce2Digits: true,
+          onTimeChange: (time) {
+            setState(() {
+              _selectedDay = time;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  /// FUNÇÃO PARA DELETAR TAREFAS ESPECÍFICAS DA LISTA
+  void onDelete(Todo todo) {
+    // CRIADA A FUNÇÃO onDelete NO WIDGTE PAI
+    deletedTodo = todo;
+    // ''SALVAR'' A TAREFA DELETADA
+    deletedTodoPos = todos.indexOf(todo);
+    // RETORNAR O ÍNDICE DA TAREFA REMOVIDA = SENDO: 0, 1, 2 E ETC...
+    setState(() {
+      todos.remove(todo);
+    });
+    todoRepository.saveTodoList(todos);
+    // SALVAR A EXCLUSÃO DO ITEM NO REPOSITÓRIO
+    ScaffoldMessenger.of(context).clearSnackBars();
+    // SUBIR A OPÇÃO DE DESFAZER A MEDIDA QUE FOR SENDO SELECIONADO
+    ScaffoldMessenger.of(context).showSnackBar(
+      // MENSAGEM APÓS AÇÃO DO USUÁRIO
+      SnackBar(
+        content: Text(
+          'Tarefa ${todo.title} foi removida com sucesso!',
+          style: const TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        action: SnackBarAction(
+          label: 'Desfazer',
+          textColor: Colors.grey,
+          onPressed: () {
+            setState(() {
+              todos.insert(deletedTodoPos!, deletedTodo!);
+              // INSERIR NA POSIÇÃO, O ITEM DELETADO
+              // EXCLAMAÇÃO PARA INFORMAR QUE O PARÂMETRO SÓ SERÁ TRATADADO SE NÃO FOR NULO
+            });
+            todoRepository.saveTodoList(todos);
+            // SALVAR A EXCLUSÃO DO ITEM NO REPOSITÓRIO
+          },
+        ),
+        duration: const Duration(seconds: 5),
+        // DURAÇÃO DA MENSAGEM DE DESFAZER
+      ),
+    );
+  }
+
+  /// DELETAR TODOS AS TAREFAS DA LISTA
+  void deleteAllTodos() {
+    // FUNÇÃO PARA LIMPAR TUDO
+    setState(() {
+      todos.clear();
+    });
+    todoRepository.saveTodoList(todos);
+    // SALVAR A EXCLUSÃO DOS ITENS NO REPOSITÓRIO
+  }
+
+  /// FUNÇÃO DE POP-UP COM A CONFIRMAÇÃO DA EXCLUSÃO COM OPÇÃO DE DESFAZER
+  void showDeleteTodosConfirmationDialog() {
+    // FUNÇÃO PARA CRIAR UMA CAIXA DE ALERTA PARA LIMPAR TUDO
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Limpar tudo?'),
+        content:
+            const Text('Você tem certeza que deseja apagar todas as tarefas?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // PARA FECHAR O DIÁLOGO
+            },
+            style: TextButton.styleFrom(primary: Colors.lightBlue),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteAllTodos();
+              // PARA FECHAR O DIÁLOGO E CHAMAR A FUNÇÃO DE LIMPAR TUDO
+            },
+            style: TextButton.styleFrom(primary: Colors.red),
+            child: const Text('Limpar tudo'),
+          ),
+        ],
+      ),
     );
   }
 }
