@@ -9,11 +9,11 @@ class TodoListItem extends StatelessWidget {
     required this.todo,
     required this.onDelete,
   }) : super(key: key);
-
-  // O WIDGTE FILHO RECEBEU A FUNÇÃO onDelete POR PARÂMETRO
+  // O WIDGET FILHO RECEBEU A FUNÇÃO onDelete POR PARÂMETRO
 
   final Todo todo;
   final Function(Todo) onDelete;
+  get _date => DateFormat.yMd().format(todo.date);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class TodoListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               // POSICIONA O TEXTO DA LISTA DE TARAFA NA ESQUERDA E PROPORCIONA A COLUNA DE ACORDO COM O ESPAÇO DE CORRER
               children: [
-                Text(DateFormat('dd/MM/yyyy - HH:mm').format(todo.dateTime),
+                Text('$_date - ' + todo.time.format(context),
                     // ACESSANDO E FORMATANDO A DATA
                     style: const TextStyle(
                       fontSize: 12,
