@@ -26,7 +26,9 @@ class _TodoListPageState extends State<TodoListPage> {
   final CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
-  TimeOfDay? time;
+  TimeOfDay time = TimeOfDay.now();
+
+  get newTime => time;
 
   /// FORMATANDO DATA SELECIONADA E O DIA ATUAL
   get _dateNow => DateFormat.yMd().format(_focusedDay);
@@ -74,8 +76,7 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   showPreview(file) async {
-    file = await Get.to(() =>
-        PreviewPage(
+    file = await Get.to(() => PreviewPage(
           file: file,
           key: file,
         ));
@@ -170,7 +171,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       color: Color.fromRGBO(47, 64, 79, 1),
                     ),
                     weekendStyle: const TextStyle(
-                      // DIAS DA SEMANA - FIM DE SEMANA
+                        // DIAS DA SEMANA - FIM DE SEMANA
                         fontFamily: "lib/fonts/Roboto-Medium.ttf",
                         fontWeight: FontWeight.w600,
                         fontSize: 17.0,
@@ -190,11 +191,11 @@ class _TodoListPageState extends State<TodoListPage> {
                       color: Color.fromRGBO(25, 32, 51, 1.0),
                     ),
                     defaultTextStyle: TextStyle(
-                      // DIAS DOS MêS - ÚTEIS
+                        // DIAS DOS MêS - ÚTEIS
                         fontFamily: "lib/fonts/Roboto-Light.ttf",
                         color: Colors.white),
                     weekendTextStyle: TextStyle(
-                      // DIAS DOS MêS - FIM DE SEMANA
+                        // DIAS DOS MêS - FIM DE SEMANA
                         fontFamily: "lib/fonts/Roboto-Light.ttf",
                         color: Colors.white),
                   ),
@@ -226,7 +227,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     shrinkWrap: true,
                     children: [
                       for (Todo todo in todos)
-                      // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
+                        // PARA CADA LISTA QUE ESTAVA NAS TAREFAS FOI CRIADO UM LISTITLE
                         if (DateFormat('dd/MM/yyyy').format(todo.date) ==
                             DateFormat('dd/MM/yyyy').format(_selectedDay))
                           (TodoListItem(
@@ -241,8 +242,8 @@ class _TodoListPageState extends State<TodoListPage> {
               Container(
                 padding: const EdgeInsets.only(top: 100.0),
                 child:
-                // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
-                Row(
+                    // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
+                    Row(
                   // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
                   children: [
                     if (todos.isEmpty)
@@ -251,20 +252,18 @@ class _TodoListPageState extends State<TodoListPage> {
                           'Você ainda não possuí tarefas adicionadas',
                         ),
                       ))
-                    else
-                      if (todos.length == 1)
-                        (Expanded(
-                          child: Text(
-                            'Você possuí ${todos.length} tarefa pendente',
-                          ),
-                        ))
-                      else
-                        if (todos.length > 1)
-                          (Expanded(
-                            child: Text(
-                              'Você possuí ${todos.length} tarefas pendentes',
-                            ),
-                          )),
+                    else if (todos.length == 1)
+                      (Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefa pendente',
+                        ),
+                      ))
+                    else if (todos.length > 1)
+                      (Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefas pendentes',
+                        ),
+                      )),
                     const SizedBox(width: 8),
                     // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
                     if (todos.isNotEmpty)
@@ -303,7 +302,7 @@ class _TodoListPageState extends State<TodoListPage> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (BuildContext context) => hourModal(),
+              builder: (BuildContext context) => hourModal(context),
             );
           },
           child: Container(
@@ -417,10 +416,8 @@ class _TodoListPageState extends State<TodoListPage> {
                   const Color.fromRGBO(85, 173, 181, 1),
                 ),
               ),
-              onPressed: () =>
-                  Get.to(
-                          () =>
-                          CameraCamera(onFile: (file) => showPreview(file))),
+              onPressed: () => Get.to(
+                  () => CameraCamera(onFile: (file) => showPreview(file))),
               icon: const Icon(Icons.camera_alt),
               label: const Padding(
                 padding: EdgeInsets.all(16.0),
@@ -465,7 +462,7 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   /// MODAL PARA ADICIONAR A TAREFA
-  Widget hourModal() {
+  Widget hourModal(context) {
     return AlertDialog(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
@@ -488,15 +485,12 @@ class _TodoListPageState extends State<TodoListPage> {
             ),
             Flexible(
               child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  use24hFormat: true,
-                  initialDateTime: _selectedDay,
-                  onDateTimeChanged: (value) {
-                    if (value != null && value != time)
-                      setState(() {
-                        time = value as TimeOfDay?;
-                      });
-                  }
+                mode: CupertinoDatePickerMode.time,
+                use24hFormat: true,
+                initialDateTime: _selectedDay,
+                onDateTimeChanged: (DateTime newTime) {
+                  setState(() => time = newTime as TimeOfDay);
+                },
               ),
             ),
             SizedBox(
@@ -525,31 +519,31 @@ class _TodoListPageState extends State<TodoListPage> {
                     setState(() {
                       errorText = 'O título não pode ser vazio!';
                     });
-                    return;
-                  }
-                  setState(() {
-                    Todo newTodo = Todo(
-                      title: text,
-                      date: _selectedDay,
-                      time: time!,
-                    );
-                    // CRIANDO UM OBJETO NEW TODO
-                    todos.add(newTodo);
-                    // ADICINAR O NEW TODO NA LISTA DE TAREFA
-                  });
-                  todoRepository.saveTodoList(todos);
-                  // SET STATE PARA ATUALIZAR A TELA
-                  todoController.clear();
-                  // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
-                  Navigator.of(context).pop();
-                  // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
-                },
+                    setState(() {
+                      Todo newTodo = Todo(
+                        title: text,
+                        date: _selectedDay,
+                        time: newTime,
+                      );
+                      // CRIANDO UM OBJETO NEW TODO
+                      todos.add(newTodo);
+                      // ADICINAR O NEW TODO NA LISTA DE TAREFA
+                    });
+                    todoRepository.saveTodoList(todos);
+                    // SET STATE PARA ATUALIZAR A TELA
+                    todoController.clear();
+                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                    Navigator.of(context).pop();
+                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
+                  }},
               ),
               width: 450.0,
               height: 70.0,
             ),
             SizedBox(
               child: TextButton.icon(
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('Adicionar'),
                 onPressed: () {
                   String text = todoController.text;
                   if (text.isEmpty) {
@@ -562,7 +556,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     Todo newTodo = Todo(
                       title: text,
                       date: _selectedDay,
-                      time: time!,
+                      time: newTime,
                     );
                     // CRIANDO UM OBJETO NEW TODO
                     todos.add(newTodo);
@@ -575,8 +569,6 @@ class _TodoListPageState extends State<TodoListPage> {
                   Navigator.of(context).pop();
                   // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
                 },
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Adicionar'),
               ),
             ),
           ],
@@ -641,31 +633,30 @@ class _TodoListPageState extends State<TodoListPage> {
     // FUNÇÃO PARA CRIAR UMA CAIXA DE ALERTA PARA LIMPAR TUDO
     showDialog(
       context: context,
-      builder: (context) =>
-          AlertDialog(
-            title: const Text('Limpar tudo?'),
-            content:
+      builder: (context) => AlertDialog(
+        title: const Text('Limpar tudo?'),
+        content:
             const Text('Você tem certeza que deseja apagar todas as tarefas?'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // PARA FECHAR O DIÁLOGO
-                },
-                style: TextButton.styleFrom(primary: Colors.lightBlue),
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  deleteAllTodos();
-                  // PARA FECHAR O DIÁLOGO E CHAMAR A FUNÇÃO DE LIMPAR TUDO
-                },
-                style: TextButton.styleFrom(primary: Colors.red),
-                child: const Text('Limpar tudo'),
-              ),
-            ],
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // PARA FECHAR O DIÁLOGO
+            },
+            style: TextButton.styleFrom(primary: Colors.lightBlue),
+            child: const Text('Cancelar'),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteAllTodos();
+              // PARA FECHAR O DIÁLOGO E CHAMAR A FUNÇÃO DE LIMPAR TUDO
+            },
+            style: TextButton.styleFrom(primary: Colors.red),
+            child: const Text('Limpar tudo'),
+          ),
+        ],
+      ),
     );
   }
 }
