@@ -300,10 +300,7 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) => hourModal(context),
-            );
+            hourModal(context);
           },
           child: Container(
             width: 60,
@@ -438,7 +435,7 @@ class _TodoListPageState extends State<TodoListPage> {
                 ),
               ),
               onPressed: () => getFileFromGallery(),
-              icon: const Icon(Icons.attach_file),
+              icon: const Icon(Icons.image),
               label: const Padding(
                 padding: EdgeInsets.all(10.0),
                 child: Text('Selecionar da Galeria'),
@@ -462,63 +459,109 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   /// MODAL PARA ADICIONAR A TAREFA
-  Widget hourModal(context) {
-    return AlertDialog(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(15.0),
+  void hourModal(BuildContext context) {
+    // FUNÇÃO PARA CRIAR A CAIXA DE ALERTA PARA ADIÇÃO DE TAREFA
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
         ),
-      ),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 70, vertical: 150),
-      content: Flexible(
-        child: Column(
-          children: [
-            const Text(
-              'Adicionar Tarefa',
-              style: TextStyle(
-                  fontFamily: "lib/fonts/Roboto-Bold.ttf",
-                  fontSize: 26,
-                  color: Colors.black),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-            ),
-            Flexible(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.time,
-                use24hFormat: true,
-                initialDateTime: _selectedDay,
-                onDateTimeChanged: (DateTime newTime) {
-                  setState(() => time = newTime as TimeOfDay);
-                },
-              ),
-            ),
-            SizedBox(
-              child: TextField(
-                controller: todoController,
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  labelText: 'Ex: Estudar Inglês',
-                  // TÍTULO DO CAMPO
-                  errorText: errorText,
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.cyan,
-                      width: 2,
+        title: const Text(
+          'Adicionar Tarefa',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: "lib/fonts/Roboto-Bold.ttf",
+              fontSize: 26.0,
+              color: Colors.black),
+        ),
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 100.0, vertical: 180.0),
+        content: Flexible(
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.time,
+            use24hFormat: true,
+            initialDateTime: _selectedDay,
+            onDateTimeChanged: (DateTime newTime) {
+              setState(() => time = newTime as TimeOfDay);
+            },
+          ),
+        ),
+        actions: [
+          Column(
+            children: [
+              Center(
+                child: SizedBox(
+                  width: 250.0,
+                  child: TextField(
+                    controller: todoController,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          const EdgeInsets.only(left: 5.0, right: 5.0),
+                      floatingLabelAlignment: FloatingLabelAlignment.center,
+                      border: const UnderlineInputBorder(),
+                      errorText: errorText,
+                      labelText: 'Ex: Estudar Inglês',
+                      // DESCRIÇÃO DO CAMPO
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.cyan,
+                          width: 2.0,
+                        ),
+                      ),
+                      enabledBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.cyan,
+                          width: 2.0,
+                        ),
+                      ),
                     ),
-                  ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.cyan,
-                      width: 2,
-                    ),
+                    onSubmitted: (String text) {
+                      if (text.isEmpty) {
+                        setState(() {
+                          errorText = 'O título não pode ser vazio!';
+                        });
+                        return;
+                      }
+                      todoController.clear();
+                      // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                      Navigator.of(context).pop();
+                      // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
+                      setState(() {
+                        Todo newTodo = Todo(
+                          title: text,
+                          date: _selectedDay,
+                          time: newTime,
+                        );
+                        // CRIANDO UM OBJETO NEW TODO
+                        todos.add(newTodo);
+                        // ADICINAR O NEW TODO NA LISTA DE TAREFA
+                      });
+                      todoRepository.saveTodoList(todos);
+                      // SET STATE PARA ATUALIZAR A TELA
+                    },
                   ),
                 ),
-                onSubmitted: (String text) {
-                  if (text.isEmpty) {
-                    setState(() {
-                      errorText = 'O título não pode ser vazio!';
-                    });
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: 10.0)),
+              SizedBox(
+                child: TextButton.icon(
+                  icon: const Icon(Icons.add, size: 18.0),
+                  label: const Text('Adicionar', style: TextStyle(color: Colors.black)),
+                  onPressed: () {
+                    String text = todoController.text;
+                    if (text.isEmpty) {
+                      setState(() {
+                        errorText = 'O título não pode ser vazio!';
+                      });
+                      return;
+                    }
+                    todoController.clear();
+                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
+                    Navigator.of(context).pop();
+                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
                     setState(() {
                       Todo newTodo = Todo(
                         title: text,
@@ -531,48 +574,12 @@ class _TodoListPageState extends State<TodoListPage> {
                     });
                     todoRepository.saveTodoList(todos);
                     // SET STATE PARA ATUALIZAR A TELA
-                    todoController.clear();
-                    // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
-                    Navigator.of(context).pop();
-                    // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
-                  }},
+                  },
+                ),
               ),
-              width: 450.0,
-              height: 70.0,
-            ),
-            SizedBox(
-              child: TextButton.icon(
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Adicionar'),
-                onPressed: () {
-                  String text = todoController.text;
-                  if (text.isEmpty) {
-                    setState(() {
-                      errorText = 'O título não pode ser vazio!';
-                    });
-                    return;
-                  }
-                  setState(() {
-                    Todo newTodo = Todo(
-                      title: text,
-                      date: _selectedDay,
-                      time: newTime,
-                    );
-                    // CRIANDO UM OBJETO NEW TODO
-                    todos.add(newTodo);
-                    // ADICINAR O NEW TODO NA LISTA DE TAREFA
-                  });
-                  todoRepository.saveTodoList(todos);
-                  // SET STATE PARA ATUALIZAR A TELA
-                  todoController.clear();
-                  // APÓS A ADIÇÃO, O TEXTO DIGITADO É EXCLUÍDO DO CAMPO DE TAREFA
-                  Navigator.of(context).pop();
-                  // PARA FECHAR A CAIXA DE TEXTO APÓS O SUBMITE (ENTER)
-                },
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
