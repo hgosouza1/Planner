@@ -239,61 +239,56 @@ class _TodoListPageState extends State<TodoListPage> {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 100.0),
-                child:
-                    // 2º ESPAÇAMENTO ENTRE LISTA E INFORMATIVO DO TOTAL
-                    Row(
-                  // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
-                  children: [
-                    if (todos.isEmpty)
-                      (const Expanded(
-                        child: Text(
-                          'Você ainda não possuí tarefas adicionadas',
-                        ),
-                      ))
-                    else if (todos.length == 1)
-                      (Expanded(
-                        child: Text(
-                          'Você possuí ${todos.length} tarefa pendente',
-                        ),
-                      ))
-                    else if (todos.length > 1)
-                      (Expanded(
-                        child: Text(
-                          'Você possuí ${todos.length} tarefas pendentes',
-                        ),
-                      )),
-                    const SizedBox(width: 8),
-                    // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
-                    if (todos.isNotEmpty)
-                      ElevatedButton.icon(
-                        // BOTÃO DE LIMPAR
-                        icon: const Icon(
-                          Icons.delete_sweep_rounded,
-                        ),
-                        onPressed: showDeleteTodosConfirmationDialog,
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          onPrimary: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32.0),
+              Row(
+                // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
+                children: [
+                  if (todos.isEmpty)
+                        const Expanded(
+                          child: Text(
+                            'Você ainda não possuí tarefas adicionadas',
                           ),
-                          padding: const EdgeInsets.all(12),
-                        ),
-                        label: const Text(
-                          'Limpar tudo',
-                          style: TextStyle(
-                            fontFamily: "lib/fonts/Roboto-Medium.ttf",
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                        // style: TextStyle(fontWeight: FontWeight.bold)),
+                    )
+                  else if (todos.length == 1)
+                    (Expanded(
+                      child: Text(
+                        'Você possuí ${todos.length} tarefa pendente',
                       ),
-                  ],
-                ),
+                    ))
+                  else if (todos.length > 1)
+                    (Expanded(
+                      child: Text(
+                        'Você possuí ${todos.length} tarefas pendentes',
+                      ),
+                    )),
+                  const SizedBox(width: 8),
+                  // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
+                  if (todos.isNotEmpty)
+                    ElevatedButton.icon(
+                      // BOTÃO DE LIMPAR
+                      icon: const Icon(
+                        Icons.delete_sweep_rounded,
+                      ),
+                      onPressed: showDeleteTodosConfirmationDialog,
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        onPrimary: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                      ),
+                      label: const Text(
+                        'Limpar tudo',
+                        style: TextStyle(
+                          fontFamily: "lib/fonts/Roboto-Medium.ttf",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                      // style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                ],
               ),
             ],
           ),
@@ -307,7 +302,8 @@ class _TodoListPageState extends State<TodoListPage> {
             height: 60,
             child: const Icon(
               Icons.add,
-              size: 37,
+              size: 35,
+              color: Colors.white,
             ),
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
@@ -444,7 +440,6 @@ class _TodoListPageState extends State<TodoListPage> {
           ),
         ],
       ),
-      backgroundColor: const Color.fromRGBO(25, 32, 51, 1),
     );
   }
 
@@ -548,8 +543,13 @@ class _TodoListPageState extends State<TodoListPage> {
               const Padding(padding: EdgeInsets.only(bottom: 10.0)),
               SizedBox(
                 child: TextButton.icon(
-                  icon: const Icon(Icons.add, size: 18.0),
-                  label: const Text('Adicionar', style: TextStyle(color: Colors.black)),
+                  icon: const Icon(
+                    Icons.add,
+                    size: 18.0,
+                    color: Colors.cyan,
+                  ),
+                  label: const Text('Adicionar',
+                      style: TextStyle(color: Colors.white)),
                   onPressed: () {
                     String text = todoController.text;
                     if (text.isEmpty) {

@@ -37,11 +37,6 @@ class TodoListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               // POSICIONA O TEXTO DA LISTA DE TARAFA NA ESQUERDA E PROPORCIONA A COLUNA DE ACORDO COM O ESPAÇO DE CORRER
               children: [
-                Text('$_date - ' + todo.time.format(context),
-                    // ACESSANDO E FORMATANDO A DATA
-                    style: const TextStyle(
-                      fontSize: 12,
-                    )),
                 Text(
                   todo.title,
                   // ACESSANDO O TÍTULO
@@ -50,6 +45,11 @@ class TodoListItem extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                Text('$_date - ' + todo.time.format(context),
+                    // ACESSANDO E FORMATANDO A DATA
+                    style: const TextStyle(
+                      fontSize: 12,
+                    )),
               ],
             ),
           ),
