@@ -100,10 +100,10 @@ class _TodoListPageState extends State<TodoListPage> {
         children: <Widget>[
           _body(),
           Positioned(
-            top: 20,
-            right: 23,
-            height: 35,
-            width: 35,
+            top: 20.0,
+            right: 23.0,
+            height: 35.0,
+            width: 35.0,
             child: _avatar(context),
           ),
           _titleTop(),
@@ -129,7 +129,7 @@ class _TodoListPageState extends State<TodoListPage> {
                 color: Colors.white,
               ),
             ),
-            padding: const EdgeInsets.only(top: 24),
+            padding: const EdgeInsets.only(top: 24.0),
           )
         else
           Container(
@@ -144,7 +144,7 @@ class _TodoListPageState extends State<TodoListPage> {
                 color: Colors.white,
               ),
             ),
-            padding: const EdgeInsets.only(top: 24),
+            padding: const EdgeInsets.only(top: 24.0),
           )
       ],
     );
@@ -153,9 +153,7 @@ class _TodoListPageState extends State<TodoListPage> {
   /// CORPO COM A LISTA DO APP
   Widget _body() {
     return Scaffold(
-        body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        body: Column(
             children: [
               Container(
                 padding: const EdgeInsets.only(top: 75.0),
@@ -219,9 +217,9 @@ class _TodoListPageState extends State<TodoListPage> {
                   },
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: Flexible(
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.only(top: 20.0),
                   child: ListView(
                     // LISTA COM BARRA DE ROLAGEM COM TODOS OS ITENS
                     shrinkWrap: true,
@@ -240,69 +238,83 @@ class _TodoListPageState extends State<TodoListPage> {
                 ),
               ),
               Row(
-                // 2º LINHA COM O INFORMATIVO DE TOTAL DE TAREFAS E BOTÃO DE LIMPAR
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
                 children: [
                   if (todos.isEmpty)
-                        const Expanded(
-                          child: Text(
-                            'Você ainda não possuí tarefas adicionadas',
-                          ),
+                    Flexible(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const <Widget>[
+                            Text(
+                              'Você ainda não possuí tarefas adicionadas.',
+                            ),
+                          ],
+                        ),
+                      ),
                     )
                   else if (todos.length == 1)
-                    (Expanded(
-                      child: Text(
-                        'Você possuí ${todos.length} tarefa pendente',
+                    Container(
+                      padding: const EdgeInsets.only(left: 20.0, top: 10, right: 10, bottom: 10),
+                      child: Expanded(
+                        child: Text(
+                          'Você possuí ${todos.length} tarefa pendente',
+                        ),
                       ),
-                    ))
+                    )
                   else if (todos.length > 1)
-                    (Expanded(
-                      child: Text(
-                        'Você possuí ${todos.length} tarefas pendentes',
-                      ),
-                    )),
-                  const SizedBox(width: 8),
-                  // ESPAÇAMENTO ENTRE O INFORMATIVO DO TOTAL E O BOTÃO DE LIMPAR
+                    Container(
+                        padding: const EdgeInsets.only(left: 20.0, top: 10, right: 10, bottom: 10),
+                        child: Expanded(
+                          child: Text(
+                            'Você possuí ${todos.length} tarefas pendentes',
+                          ),
+                        )),
                   if (todos.isNotEmpty)
-                    ElevatedButton.icon(
-                      // BOTÃO DE LIMPAR
-                      icon: const Icon(
-                        Icons.delete_sweep_rounded,
-                      ),
-                      onPressed: showDeleteTodosConfirmationDialog,
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        onPrimary: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                    Container(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: ElevatedButton.icon(
+                        // BOTÃO DE LIMPAR
+                        icon: const Icon(
+                          Icons.delete_sweep_rounded,
                         ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      label: const Text(
-                        'Limpar tudo',
-                        style: TextStyle(
-                          fontFamily: "lib/fonts/Roboto-Medium.ttf",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                        onPressed: showDeleteTodosConfirmationDialog,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.transparent,
+                          onPrimary: Colors.white,
+                          elevation: 0.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32.0),
+                          ),
+                          padding: const EdgeInsets.all(12.0),
                         ),
+                        label: const Text(
+                          'Limpar tudo',
+                          style: TextStyle(
+                            fontFamily: "lib/fonts/Roboto-Medium.ttf",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.0,
+                          ),
+                        ),
+                        // style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
-                      // style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                 ],
               ),
             ],
           ),
-        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             hourModal(context);
           },
           child: Container(
-            width: 60,
-            height: 60,
+            width: 60.0,
+            height: 60.0,
             child: const Icon(
               Icons.add,
-              size: 35,
+              size: 35.0,
               color: Colors.white,
             ),
             decoration: const BoxDecoration(
@@ -321,11 +333,11 @@ class _TodoListPageState extends State<TodoListPage> {
           ),
           child: BottomAppBar(
             color: const Color.fromRGBO(25, 32, 51, 1),
-            notchMargin: 10,
+            notchMargin: 10.0,
             shape: const CircularNotchedRectangle(),
-            elevation: 60,
+            elevation: 60.0,
             child: SizedBox(
-              height: 60,
+              height: 60.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -350,7 +362,7 @@ class _TodoListPageState extends State<TodoListPage> {
             fit: BoxFit.cover,
           ),
           backgroundColor: Colors.transparent,
-          elevation: 60,
+          elevation: 60.0,
           onPressed: () {
             showDialog(
               context: context,
@@ -363,7 +375,7 @@ class _TodoListPageState extends State<TodoListPage> {
       return SizedBox(
         child: FloatingActionButton(
           child: Icon(Icons.account_circle_sharp,
-              color: Colors.grey[900], size: 35),
+              color: Colors.grey[900], size: 35.0),
           backgroundColor: Colors.white,
           onPressed: () {
             showDialog(
@@ -379,7 +391,8 @@ class _TodoListPageState extends State<TodoListPage> {
   /// POP-UP PARA SELEÇÃO DA IMAGEM DE PERFIL
   Widget _buildPopupDialog(BuildContext context) {
     return AlertDialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 200),
+      insetPadding:
+          const EdgeInsets.symmetric(horizontal: 20.0, vertical: 200.0),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(15.0),
@@ -393,12 +406,12 @@ class _TodoListPageState extends State<TodoListPage> {
             style: TextStyle(
                 fontFamily: "lib/fonts/Segoe UI Bold.ttf",
                 fontWeight: FontWeight.w600,
-                fontSize: 26,
+                fontSize: 26.0,
                 letterSpacing: 1.0,
                 color: Colors.white),
           ),
           Container(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: const EdgeInsets.only(bottom: 30.0),
           ),
           SizedBox(
             width: 220.0,
@@ -419,7 +432,7 @@ class _TodoListPageState extends State<TodoListPage> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10.0),
           ),
           SizedBox(
             width: 220.0,
@@ -470,7 +483,7 @@ class _TodoListPageState extends State<TodoListPage> {
           style: TextStyle(
               fontFamily: "lib/fonts/Roboto-Bold.ttf",
               fontSize: 26.0,
-              color: Colors.black),
+              color: Colors.white),
         ),
         insetPadding:
             const EdgeInsets.symmetric(horizontal: 100.0, vertical: 180.0),
@@ -508,7 +521,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       ),
                       enabledBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.cyan,
+                          color: Colors.white,
                           width: 2.0,
                         ),
                       ),
@@ -549,7 +562,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     color: Colors.cyan,
                   ),
                   label: const Text('Adicionar',
-                      style: TextStyle(color: Colors.white)),
+                      style: TextStyle(color: Colors.cyan)),
                   onPressed: () {
                     String text = todoController.text;
                     if (text.isEmpty) {
