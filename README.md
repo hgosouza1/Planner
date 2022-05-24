@@ -1,6 +1,6 @@
-# todolist
+# Planner
 
-A new Flutter project.
+Aplicativo em simples e ágil para um planejamento diário.
 
 ## Getting Started
 
