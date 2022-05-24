@@ -1,6 +1,6 @@
 # Planner
 
-Aplicativo em simples e ágil para um planejamento diário.
+Aplicativo simples e ágil para o planejamento pessoal diário.
 
 ## Getting Started
 
